@@ -1,0 +1,29 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
+from matplotlib import cm
+from matplotlib.patches import Polygon
+from matplotlib.collections import PatchCollection
+
+fig, ax = plt.subplots(figsize=(8, 5))
+patches, colors, ncolor = [], [], 8
+
+for n, county in enumerate(counties['features']):
+    # Only use first polygon if multiple discontiguous regions
+    poly = np.array(county['geometry']['coordinates'][0])
+    poly = poly.reshape(-1, 2)
+    polygon = Polygon(poly)
+    patches.append(polygon)
+    colors.append(n % ncolor)
+
+#https://matplotlib.org/stable/tutorials/colors/colormaps.html
+p = PatchCollection(patches, cmap=cm.get_cmap('viridis', ncolor))
+p.set_array(np.array(colors))
+ax.add_collection(p)
+
+ax.set_ylim(24, 50)
+ax.set_ylabel("Latitude")
+ax.set_xlim(-126, -67)
+ax.set_xlabel("Longitude")
+ax.set_title("Counties of the United States");
+plt.savefig("Counties_of_the_United States.png")
